@@ -2335,8 +2335,125 @@ function orc() {
 }
 
 (function () {
-  console.log(generateQrcode);
-  return;
+    var list = [
+        'header-工具函数',
+        'request',
+        'getObjectUrl',
+        'getAuth',
+
+        //'getService', // 不支持，正常场景会跨域
+        'header-存储桶操作',
+        //'putBucket', // 不支持，正常场景会跨域
+        'headBucket',
+        'putBucketAcl',
+        'getBucketAcl',
+        'putBucketCors',
+        'getBucketCors',
+        // 'deleteBucketCors', // 不建议调用，删除 CORS，浏览器不能正常调用
+        'putBucketTagging',
+        'getBucketTagging',
+        'deleteBucketTagging',
+        'putBucketPolicy',
+        'getBucketPolicy',
+        'deleteBucketPolicy',
+        'getBucketLocation',
+        'getBucketLifecycle',
+        'putBucketLifecycle',
+        'deleteBucketLifecycle',
+        'putBucketVersioning',
+        'getBucketVersioning',
+        'getBucketReplication',
+        'putBucketReplication',
+        'deleteBucketReplication',
+        'putBucketWebsite',
+        'getBucketWebsite',
+        'deleteBucketWebsite',
+        'putBucketReferer',
+        'getBucketReferer',
+        'putBucketDomain',
+        'getBucketDomain',
+        'deleteBucketDomain',
+        'putBucketLogging',
+        'getBucketLogging',
+        'deleteBucketLogging',
+        'putBucketInventory',
+        'getBucketInventory',
+        'deleteBucketInventory',
+        'listBucketInventory',
+        'putBucketEncryption',
+        'getBucketEncryption',
+        'deleteBucketEncryption',
+        'deleteBucket',
+
+        'header-对象操作',
+        'getBucket',
+        'listObjectVersions',
+        'putObjectCopy',
+        'getObject',
+        'headObject',
+        'putObjectAcl',
+        'getObjectAcl',
+        'deleteObject',
+        'deleteMultipleObject',
+        'restoreObject',
+        'abortUploadTask',
+        'selectObjectContent',
+        'putObject',
+        'putObject_base64ToBlob',
+        'appendObject',
+        'appendObject_continue',
+
+        'header-高级操作',
+        'uploadFile',
+        'sliceUploadFile',
+        'selectFileToUpload',
+        'sliceCopyFile',
+        'uploadFiles',
+        'uploadFolder',
+        'uploadToFolder',
+        'moveObject',
+        'createFolder',
+        'listFolder',
+        'deleteFolder',
+        'cancelTask',
+        'pauseTask',
+        'restartTask',
+
+        'header-数据万象示例',
+        'CIExample1',
+        'CIExample2',
+        'CIExample3',
+        'CIExample4',
+        'describeMediaBuckets',
+        'getMediaInfo',
+        'getSnapshot',
+        'getImageAuditing',
+        'postImagesAuditing',
+        'getImageAuditingResult',
+        'postVideoAuditing',
+        'getVideoAuditingResult',
+        'postAudioAuditing',
+        'getAudioAuditingResult',
+        'postTextAuditing',
+        'getTextAuditingResult',
+        'postDocumentAuditing',
+        'getDocumentAuditingResult',
+        'postWebpageAuditing',
+        'getWebpageAuditingResult',
+        'describeDocProcessBuckets',
+        'getDocPreviewUrl',
+        'describeDocProcessQueues',
+        'updateDocProcessQueue',
+        'createDocProcessJobs',
+        'describeDocProcessJob',
+        'describeDocProcessJobs',
+        'getDocHtmlUrl',
+        'getImageLabel',
+        'identifyQrcode_put',
+        'identifyQrcode_get',
+        'generateQrcode',
+        'orc',
+    ];
     var labelMap = {
         putObject: '简单上传',
         putObject_base64ToBlob: '简单上传：base64转blob',
@@ -2416,174 +2533,4 @@ function orc() {
     function getPanelHeight(){
         return (mainPanel.getBoundingClientRect().height - 80) + 'px';
     }
-
 })();
-
-window.onload = () => {
-  const apiMap = {
-    toolApiMap: {
-      'request': '',
-      'getObjectUrl': '',
-      'getAuth': '',
-    },
-    bucketApiMap: {
-      'headBucket': '',
-      'putBucketAcl': '',
-      'getBucketAcl': '',
-      'putBucketCors': '',
-      'getBucketCors': '',
-      'putBucketTagging': '',
-      'getBucketTagging': '',
-      'deleteBucketTagging': '',
-      'putBucketPolicy': '',
-      'getBucketPolicy': '',
-      'deleteBucketPolicy': '',
-      'getBucketLocation': '',
-      'getBucketLifecycle': '',
-      'putBucketLifecycle': '',
-      'deleteBucketLifecycle': '',
-      'putBucketVersioning': '',
-      'getBucketVersioning': '',
-      'getBucketReplication': '',
-      'putBucketReplication': '',
-      'deleteBucketReplication': '',
-      'putBucketWebsite': '',
-      'getBucketWebsite': '',
-      'deleteBucketWebsite': '',
-      'putBucketReferer': '',
-      'getBucketReferer': '',
-      'putBucketDomain': '',
-      'getBucketDomain': '',
-      'deleteBucketDomain': '',
-      'putBucketLogging': '',
-      'getBucketLogging': '',
-      'deleteBucketLogging': '',
-      'putBucketInventory': '',
-      'getBucketInventory': '',
-      'deleteBucketInventory': '',
-      'listBucketInventory': '',
-      'putBucketEncryption': '',
-      'getBucketEncryption': '',
-      'deleteBucketEncryption': '',
-      'deleteBucket': '',
-    },
-    objectApiMap: {
-      'getBucket': '',
-      'listObjectVersions': '',
-      'putObjectCopy': '',
-      'getObject': '',
-      'headObject': '',
-      'putObjectAcl': '',
-      'getObjectAcl': '',
-      'deleteObject': '',
-      'deleteMultipleObject': '',
-      'restoreObject': '',
-      'abortUploadTask': '',
-      'selectObjectContent': '',
-      'putObject': '',
-      'putObject_base64ToBlob': '',
-      'appendObject': '',
-      'appendObject_continue': '',
-    
-      'uploadFile': '',
-      'sliceUploadFile': '',
-      'selectFileToUpload': '',
-      'sliceCopyFile': '',
-      'uploadFiles': '',
-      'uploadFolder': '',
-      'uploadToFolder': '',
-      'moveObject': '',
-      'createFolder': '',
-      'listFolder': '',
-      'deleteFolder': '',
-      'cancelTask': '',
-      'pauseTask': '',
-      'restartTask': '',
-    },
-    ciApiMap: {
-      'CIExample1': '',
-      'CIExample2': '',
-      'CIExample3': '',
-      'CIExample4': '',
-      'describeMediaBuckets': '',
-      'getMediaInfo': '',
-      'getSnapshot': '',
-      'getImageAuditing': '',
-      'postImagesAuditing': '',
-      'getImageAuditingResult': '',
-      'postVideoAuditing': '',
-      'getVideoAuditingResult': '',
-      'postAudioAuditing': '',
-      'getAudioAuditingResult': '',
-      'postTextAuditing': '',
-      'getTextAuditingResult': '',
-      'postDocumentAuditing': '',
-      'getDocumentAuditingResult': '',
-      'postWebpageAuditing': '',
-      'getWebpageAuditingResult': '',
-      'describeDocProcessBuckets': '',
-      'getDocPreviewUrl': '',
-      'describeDocProcessQueues': '',
-      'updateDocProcessQueue': '',
-      'createDocProcessJobs': '',
-      'describeDocProcessJob': '',
-      'describeDocProcessJobs': '',
-      'getDocHtmlUrl': '',
-      'getImageLabel': '',
-      'identifyQrcode_put': '',
-      'identifyQrcode_get': '',
-      'generateQrcode': '',
-      'orc': '',
-    },
-  };
-  const template = `
-      <div class="main">
-      <div class="header">cos-js-sdk-v5 demo</div>
-      <div class="container">
-        <div class="side-bar">
-          <div v-for="item in menuList" :key="item.value" :class="{active: activeMenu === item.value}" @click="clickMenu(item.value)">{{item.name}}</div>
-        </div>
-        <div class="content">
-          <div v-for="api in apiList" class="api-item">
-            <h3>{{api.name}}<span class="excuteBtn">执行</span></h3>
-            <div class="api-pre-content">
-              <pre class="code-content">{{ api.fn }}</pre>
-              <pre class="result-content">{{ api.result }}</pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  const app = new Vue({
-    el: '#app',
-    template: template,
-    data: {
-      menuList: [{ name: '工具函数', value: 'tool' },
-      { name: '存储桶操作', value: 'bucket' },
-      { name: '对象操作', value: 'object' },
-      { name: '数据万象', value: 'ci' }],
-      activeMenu: 'tool',
-      apiList: [],
-    },
-    methods: {
-      clickMenu(menu) {
-        this.activeMenu = menu;
-        this.getApiList();
-      },
-      getApiList() {
-        const currentApiMap = apiMap[`${this.activeMenu}ApiMap`];
-        this.apiList = Object.keys(currentApiMap).map(item => ({
-          name: item,
-          cname: currentApiMap[item] || item,
-          fn: window[item],
-          result: '',
-        }));
-      },
-    },
-    created() {
-      this.getApiList();
-    },
-  });
-}
-
-
