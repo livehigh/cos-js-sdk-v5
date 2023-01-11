@@ -9,7 +9,7 @@
     "dev": "cross-env NODE_ENV=development webpack -w --mode=development",
     "build": "cross-env NODE_ENV=production webpack --mode=production",
     "cos-auth.min.js": "uglifyjs ./demo/common/cos-auth.js -o ./demo/common/cos-auth.min.js -c -m",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
