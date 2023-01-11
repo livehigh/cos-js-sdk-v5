@@ -8,6 +8,8 @@ import COS from '../index.js';
 var config = {
 	Bucket: process.env.Bucket,
 	Region: process.env.Region,
+  ReplicationBucket: process.env.ReplicationBucket,
+  ReplicationRegion: process.env.ReplicationRegion,
   Uin: process.env.Uin,
 };
 
@@ -150,7 +152,7 @@ var group = function (name, fn) {
 
 var assert = {
   ok: function(val) {
-    expect(Boolean(val)).toBe(true);
+    expect(Boolean(val)).toBeTruthy();
   }
 };
 
@@ -2057,8 +2059,8 @@ group('params check Region', function () {
           Bucket: config.Bucket,
           Region: 'cos.ap-guangzhou'
       }, function (err, data) {
-          // assert.ok(err.message === 'param Region should not be start with "cos."');
-          err ? done(err) : done();
+          assert.ok(err.message === 'param Region should not be start with "cos."');
+          done();
       });
   });
   test('params check Region', function (done) {
@@ -2066,7 +2068,8 @@ group('params check Region', function () {
           Bucket: config.Bucket,
           Region: 'gz'
       }, function (err, data) {
-          err ? done(err) : done();
+        assert.ok(err.message === 'CORS blocked or network error');
+        done();
       });
   });
 });
@@ -3200,33 +3203,37 @@ group('selectObjectContent(),selectObjectContentStream()', function () {
 
 group('BucketReplication', function () {
   var prepared = false;
-  var repBucket = config.Bucket.replace(/^(.*)(-\d+)$/, '$1-replication$2')
-  var repBucketName = repBucket.replace(/(-\d+)$/, '')
-  var repRegion = 'ap-chengdu';
+  // var repBucket = config.Bucket.replace(/^(.*)(-\d+)$/, '$1-replication$2');
+  var repBucket = config.ReplicationBucket;
+  var repRegion = config.ReplicationRegion;
+  var repBucketName = repBucket.replace(/(-\d+)$/, '');
   var prepareBucket = function (callback) {
-      cos.putBucket({
-          Bucket: repBucket,
-          Region: repRegion,
-      }, function (err, data) {
-          cos.putBucketVersioning({
-              Bucket: config.Bucket,
-              Region: config.Region,
-              VersioningConfiguration: {
-                  Status: 'Enabled'
-              }
-          }, function (err, data) {
-              cos.putBucketVersioning({
-                  Bucket: repBucket,
-                  Region: repRegion,
-                  VersioningConfiguration: {
-                      Status: 'Enabled'
-                  }
-              }, function (err, data) {
-                  prepared = true
-                  callback();
-              });
-          });
-      });
+    cos.putBucketVersioning({
+      Bucket: config.Bucket,
+      Region: config.Region,
+      VersioningConfiguration: {
+          Status: 'Enabled'
+      }
+    }, function (err, data) {
+        if (err) {
+          console.log('putBucketVersioning error', err);
+          return;
+        }
+        cos.putBucketVersioning({
+            Bucket: repBucket,
+            Region: repRegion,
+            VersioningConfiguration: {
+                Status: 'Enabled'
+            }
+        }, function (err, data) {
+            if (err) {
+              console.log('prepareBucket error', err);
+              return;
+            }
+            prepared = true;
+            callback();
+        });
+    });
   };
   test('putBucketReplication();getBucketReplication()', function (done) {
       var ruleId = Date.now().toString(36);
@@ -3241,7 +3248,7 @@ group('BucketReplication', function () {
                       Status: "Enabled",
                       Prefix: "sync/",
                       Destination: {
-                          Bucket: `qcs:id/0:cos:${repRegion}:appid/${AppId}:${repBucketName}`,
+                          Bucket: `qcs::cos:${repRegion}::${repBucket}`,
                       }
                   }]
               }
@@ -3321,7 +3328,6 @@ group('putBucketVersioning(),getBucketVersioning()', function () {
                   Bucket: config.Bucket,
                   Region: config.Region,
               }, function (err, data) {
-                  console.log(data.VersioningConfiguration.Status);
                   assert.ok(data.VersioningConfiguration.Status === 'Suspended');
                   done();
               });
@@ -3398,10 +3404,7 @@ group('BucketReferer', function () {
           Status: 'Enabled',
           RefererType: 'White-List',
           DomainList: {
-              Domains: [
-                  Date.now().toString(36) + '.qq.com',
-                  '*.qcloud.com',
-              ]
+              Domains: [Date.now().toString(36) + '.qq.com', '*.qcloud.com']
           },
           EmptyReferConfiguration: 'Allow',
       };
@@ -3416,7 +3419,11 @@ group('BucketReferer', function () {
                   Bucket: config.Bucket,
                   Region: config.Region
               }, function (err, data) {
-                  assert.ok(comparePlainObject(conf, data.RefererConfiguration));
+                  var isEqual = comparePlainObject(conf.Status, data.RefererConfiguration.Status) &&
+                  comparePlainObject(conf.RefererType, data.RefererConfiguration.RefererType) &&
+                  comparePlainObject(conf.DomainList, data.RefererConfiguration.DomainList) &&
+                  comparePlainObject(conf.EmptyReferConfiguration, data.RefererConfiguration.EmptyReferConfiguration) &&
+                  assert.ok(isEqual);
                   done();
               });
           }, 2000);
